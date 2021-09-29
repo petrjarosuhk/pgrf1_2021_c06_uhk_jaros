@@ -1,3 +1,5 @@
+import raster.*;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,7 +22,9 @@ public class Canvas {
 
     private JFrame frame;
     private JPanel panel;
-    private BufferedImage img;
+    //private BufferedImage img;
+    private Raster raster;
+    private LineRasterizer lineRasterizer;
 
     public Canvas(int width, int height) {
         frame = new JFrame();
@@ -30,7 +34,10 @@ public class Canvas {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        raster = new RasterBufferedImage(width, height);
+        //lineRasterizer = new LineRasterizerFill(raster);
+        lineRasterizer = new LineRasterizerBI(raster);
+        //img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         panel = new JPanel() {
             private static final long serialVersionUID = 1L;
@@ -50,38 +57,26 @@ public class Canvas {
     }
 
     public void clear() {
+        BufferedImage img = ((RasterBufferedImage)raster).getImg();
         Graphics gr = img.getGraphics();
         gr.setColor(new Color(0x2f2f2f));
         gr.fillRect(0, 0, img.getWidth(), img.getHeight());
     }
 
     public void present(Graphics graphics) {
+        BufferedImage img = ((RasterBufferedImage)raster).getImg();
         graphics.drawImage(img, 0, 0, null);
     }
 
     public void draw() {
         clear();
 
-        drawLine(10,10,100,50);
-        drawLine(50,100,200,150);
-        drawLine(10,10,100,250);
-        drawLine(10,10,100,550);
+        lineRasterizer.rasterize(10,10,100,50);
+        lineRasterizer.rasterize(50,100,200,150);
+        lineRasterizer.rasterize(10,10,100,250);
+        lineRasterizer.rasterize(10,10,100,550);
     }
 
-    public void drawLine(int x1, int y1, int x2, int y2) {
-        //float k = (y2 - y1) / (x2 - x1);
-        //float k = (float)((y2 - y1) / (x2 - x1));
-        //float k = ((float)(y2 - y1)) / (x2 - x1);
-        //float k = (float)(y2 - y1) / (float)(x2 - x1);
-        //float k = (y2 - y1) / (float)(x2 - x1);
-        float k = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
-
-        float q = y1 - k * x1;
-        for (int x = x1; x <= x2; x++) {
-            int y = (int)(k * x + q);
-            img.setRGB(x, y, 0xffff00);
-        }
-    }
 
     public void start() {
         draw();
