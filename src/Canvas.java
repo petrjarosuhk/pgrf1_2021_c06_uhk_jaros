@@ -1,3 +1,5 @@
+import model.Point;
+import model.Polygon;
 import raster.*;
 
 import java.awt.BorderLayout;
@@ -75,6 +77,11 @@ public class Canvas {
         lineRasterizer.rasterize(50,100,200,150);
         lineRasterizer.rasterize(10,10,100,250);
         lineRasterizer.rasterize(10,10,100,550);
+        Polygon  polygon = new Polygon();
+        polygon.addPoint(new Point(50,100));
+        polygon.addPoint(new Point(150,250));
+        polygon.addPoint(new Point(100,10));
+        lineRasterizer.rasterize(polygon);
     }
 
 

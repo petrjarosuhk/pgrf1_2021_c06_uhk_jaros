@@ -5,7 +5,7 @@ public class LineRasterizerFill extends LineRasterizer{
         super(raster);
     }
 
-    public void rasterize(int x1, int y1, int x2, int y2) {
+    public void rasterize(int x1, int y1, int x2, int y2, int color) {
         //float k = (y2 - y1) / (x2 - x1);
         //float k = (float)((y2 - y1) / (x2 - x1));
         //float k = ((float)(y2 - y1)) / (x2 - x1);
