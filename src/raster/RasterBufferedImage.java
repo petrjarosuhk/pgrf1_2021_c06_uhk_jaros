@@ -1,5 +1,6 @@
 package raster;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class RasterBufferedImage implements Raster{
@@ -27,4 +28,9 @@ public class RasterBufferedImage implements Raster{
     public int getHeight() {
         return img.getHeight();
     }
+    @Override
+    public  void clear(){
+        Graphics gr = img.getGraphics();
+        gr.setColor(new Color(0x2f2f2f));
+        gr.fillRect(0, 0, img.getWidth(), img.getHeight());};
 }

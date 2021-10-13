@@ -25,4 +25,6 @@ public class RasterArray implements Raster{
     public int getHeight() {
         return height;
     }
+    @Override
+    public void clear(){}
 }

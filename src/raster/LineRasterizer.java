@@ -13,7 +13,7 @@ public abstract class LineRasterizer {
     }
 
     public void rasterize(int x1, int y1, int x2, int y2){
-        rasterize(x1, y1, x2, y2, 0xff00ff);
+        rasterize(x1, y1, x2, y2, 0xffffff);
     }
 
     public void rasterize(int x1, int y1, int x2, int y2, int color){
@@ -39,6 +39,6 @@ public abstract class LineRasterizer {
 
     public void rasterize(Line line){
         //TODO
-        rasterize(line.getX1(),line.getY1(),line.getY1(),line.getY2(), line.getColor());
+        rasterize(line.getX1(),line.getY1(),line.getX2(),line.getY2(), line.getColor());
     }
 }
