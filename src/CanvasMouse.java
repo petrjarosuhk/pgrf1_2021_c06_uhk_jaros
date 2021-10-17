@@ -6,10 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +18,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 /**
- * trida pro kresleni na platno: zobrazeni pixelu, ovladani mysi
- *
+ * trida pro kresleni na platno pomocí DDA algoritmu nebo pomocí Graphics od Javy Táhnutí myší
+ *Ovládání
+ * Na plátně kliknout levým tlačítkem myší a táhnout a potom pustit.
+ * Pomocí klávesi C se vymaže plátno
+ * vždy odkomentovat, jakou čáru chceme vykreslit a pomocí čeho v kontruktoru CANVASMOUSE
+ * buď lineRasterizer= new LineRasterizerFill(raster) což je DDA algoritmus
+ * buď lineRasterizer = new LineRasterizerBI(raster) což je Graphics JAVA
+ * buď lineRasterizer = new LineRasterizerDashed(raster) což je pro kreslení čarchované čáry
  * @author PGRF FIM UHK
  * @version 2020
  */
@@ -38,7 +41,6 @@ public class CanvasMouse {
 
     public CanvasMouse(int width, int height) {
         JFrame frame = new JFrame();
-
         frame.setLayout(new BorderLayout());
         frame.setTitle("UHK FIM PGRF : " + this.getClass().getName());
         frame.setResizable(false);
@@ -46,11 +48,19 @@ public class CanvasMouse {
 
         //img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         raster = new RasterBufferedImage(width, height);
-		lineRasterizer = new LineRasterizerBI(raster);
+
+        lineRasterizer= new LineRasterizerFill(raster);/*Odkomentovat pro použití, potom zase zakomentovat. DDA algoritmus*/
+        //lineRasterizer = new LineRasterizerDashed(raster); /*Odkomentovat pro použití, potom zase zakomentovat. Graphics */
+        //lineRasterizer = new LineRasterizerBI(raster);/*Odkomentovat pro použití, potom zase zakomentovat. Graphics*/
+
+
+
 
 
 
         panel = new JPanel() {
+
+
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -61,6 +71,9 @@ public class CanvasMouse {
         };
         panel.setPreferredSize(new Dimension(width, height));
 
+        panel.setFocusable(true);
+        panel.requestFocus(true);
+
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
@@ -68,15 +81,12 @@ public class CanvasMouse {
         panel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
+
                     raster.setPixel(e.getX(), e.getY(), 0xffff00);
                     x = e.getX();
                     y = e.getY();
-                }
-                if (e.getButton() == MouseEvent.BUTTON2)
-                    raster.setPixel(e.getX(), e.getY(), 0xffff00);
-                if (e.getButton() == MouseEvent.BUTTON3)
-                    raster.setPixel(e.getX(), e.getY(), 0xffff00);
+
+
                 panel.repaint();
             }
 
@@ -97,7 +107,43 @@ public class CanvasMouse {
                 lineRasterizer.rasterize(x,y,e.getX(),e.getY());
 
                 redraw();
+
             }
+        });
+        panel.addKeyListener(new KeyListener() {
+
+
+
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+
+                char znak = e.getKeyChar();
+
+                if(znak == 'c') {
+
+                    System.out.println(znak);
+
+                    lines.clear();
+                    redraw();
+                    clear();
+                }
+
+            }
+
+
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+
         });
     }
 

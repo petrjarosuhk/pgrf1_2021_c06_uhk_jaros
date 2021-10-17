@@ -13,7 +13,7 @@ public class Line {
     }
 
     public Line(int x1, int y1, int x2, int y2){
-        this(x1, y1, x2, y2, 0xff0000);
+        this(x1, y1, x2, y2, 0xffff00);
     }
 
     public int getX1() {

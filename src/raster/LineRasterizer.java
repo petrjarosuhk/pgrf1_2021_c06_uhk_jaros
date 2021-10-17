@@ -13,10 +13,11 @@ public abstract class LineRasterizer {
     }
 
     public void rasterize(int x1, int y1, int x2, int y2){
-        rasterize(x1, y1, x2, y2, 0xffffff);
+        rasterize(x1, y1, x2, y2, 0xffff00);
     }
 
     public void rasterize(int x1, int y1, int x2, int y2, int color){
+
 
     }
 
@@ -27,6 +28,7 @@ public abstract class LineRasterizer {
             int y1 = points.get(i).getY();
             int x2 = points.get((i+1)%points.size()).getX();
             int y2 = points.get((i+1)%points.size()).getY();
+
             rasterize(x1,y1,x2,y2);
         }
         /*rasterize(

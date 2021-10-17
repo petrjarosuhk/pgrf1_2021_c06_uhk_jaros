@@ -32,5 +32,6 @@ public class RasterBufferedImage implements Raster{
     public  void clear(){
         Graphics gr = img.getGraphics();
         gr.setColor(new Color(0x2f2f2f));
-        gr.fillRect(0, 0, img.getWidth(), img.getHeight());};
+       gr.fillRect(0, 0, img.getWidth(), img.getHeight());};
+
 }
