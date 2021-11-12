@@ -1,5 +1,6 @@
 package Canvas;
 
+
 import fill.ScanLine;
 import fill.SeedFill;
 import model.Line;
@@ -9,6 +10,7 @@ import raster.LineRasterizer;
 import raster.LineRasterizerFill;
 import raster.Raster;
 import raster.RasterBufferedImage;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,32 +68,42 @@ public class CanvasMousePolygon {
             @Override
             public void mousePressed(MouseEvent e) {
 
-                if(e.getButton() == MouseEvent.BUTTON2){
+
+                if(e.getButton() == MouseEvent.BUTTON1) {
                     x1 = e.getX();
                     y1 = e.getY();
-                }
-
                     raster.setPixel(e.getX(), e.getY(), 0xffff00);
                     x = e.getX();
                     y = e.getY();
                     polygon.addPoint(new Point(x, y));
 
                     panel.repaint();
-
+                }
             }
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-                clear();
-                polygon.addPoint(new Point(e.getX(),e.getY()));
-                lineRasterizer.rasterize(polygon);
-                panel.repaint();
 
-                lines.add(new Line(x,y,e.getX(),e.getY()));
-                System.out.println("Polozky: "+lines.size());
+                if(e.getButton() == MouseEvent.BUTTON1) {
+                    clear();
 
+                    polygon.addPoint(new Point(e.getX(), e.getY()));
+                    lineRasterizer.rasterize(polygon);
+                    panel.repaint();
 
-			}
+                    lines.add(new Line(x, y, e.getX(), e.getY()));
+                    System.out.println("Polozky: " + lines.size());
+
+                }
+                if(e.getButton() == MouseEvent.BUTTON3){
+                    x1 = e.getX();
+                    y1 = e.getY();
+
+                    raster.setPixel(x1, y1, 0xFF0000);
+                    panel.repaint();
+                }
+
+            }
 		});
 
         panel.addMouseMotionListener(new MouseMotionAdapter() {
@@ -99,14 +111,15 @@ public class CanvasMousePolygon {
             public void mouseMoved(MouseEvent e) {
 
 
+
             }
             @Override
             public void mouseDragged(MouseEvent e) {
 
-                clear();
-                lineRasterizer.rasterize(x,y, e.getX(), e.getY());
-                lineRasterizer.rasterize(polygon);
-                panel.repaint();
+                    clear();
+                    lineRasterizer.rasterize(x, y, e.getX(), e.getY());
+                    lineRasterizer.rasterize(polygon);
+                    panel.repaint();
 
             }
         });
@@ -131,7 +144,7 @@ public class CanvasMousePolygon {
                 if(znak == 'v'){
 
                     SeedFill seedFill = new SeedFill(raster);
-                    seedFill.fill(x1,y1, 0xFF0000);
+                    seedFill.fill(x1 +1,y1, 0xFF0000);
                     panel.repaint();
 
                 }
@@ -140,7 +153,7 @@ public class CanvasMousePolygon {
                 if(znak == 'b'){
 
                     SeedFill seedFill = new SeedFill(raster);
-                    seedFill.fillBoundery(x1,y1,  0XFF0000);
+                    seedFill.fillBoundery(x1 + 1,y1,  0XFF0000);
                     panel.repaint();
 
 
