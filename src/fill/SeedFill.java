@@ -29,14 +29,17 @@ public class SeedFill {
 
         public void fill ( int x, int y, int bgColor){
 
-            if (isInside(x, y)) {
+        if (isInside(x, y)) {
+
                 raster.setPixel(x, y, bgColor);
+
                 fill(x + 1, y, bgColor);
                 fill(x, y + 1, bgColor);
                 fill(x - 1, y, bgColor);
                 fill(x, y - 1, bgColor);
 
             }
+
         }
 
         private boolean isInside ( int x, int y){
