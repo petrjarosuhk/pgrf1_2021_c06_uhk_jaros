@@ -17,6 +17,11 @@ public class RasterArray implements Raster{
     }
 
     @Override
+    public int getPixel(int x, int y) {
+        return array[x][y];
+    }
+
+    @Override
     public int getWidth() {
         return width;
     }

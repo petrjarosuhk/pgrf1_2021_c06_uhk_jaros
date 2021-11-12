@@ -1,45 +1,35 @@
+package Canvas;
 
+import fill.ScanLine;
+import fill.SeedFill;
 import model.Line;
-import raster.*;
+import model.Point;
+import model.Polygon;
+import raster.LineRasterizer;
+import raster.LineRasterizerFill;
+import raster.Raster;
+import raster.RasterBufferedImage;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
-/**
- * trida pro kresleni na platno pomocí DDA algoritmu nebo pomocí Graphics od Javy Táhnutí myší
- *Ovládání
- * Na plátně kliknout levým tlačítkem myší a táhnout a potom pustit.
- * Pomocí klávesi C se vymaže plátno
- * vždy odkomentovat, jakou čáru chceme vykreslit a pomocí čeho v kontruktoru CANVASMOUSE
- * buď lineRasterizer= new LineRasterizerFill(raster) což je DDA algoritmus
- * buď lineRasterizer = new LineRasterizerBI(raster) což je Graphics JAVA
- * buď lineRasterizer = new LineRasterizerDashed(raster) což je pro kreslení čarchované čáry
- * @author PGRF FIM UHK
- * @version 2020
- */
-public class CanvasMouse {
+public class CanvasMousePolygon {
 
     private JPanel panel;
     //private BufferedImage img;
     private Raster raster;
 	private LineRasterizer lineRasterizer;
-    private int x, y;
+    private int x, y, x1, y1;
     private List<Line> lines = new ArrayList<>();
 
 
-    public CanvasMouse(int width, int height) {
+    public CanvasMousePolygon(int width, int height) {
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.setTitle("UHK FIM PGRF : " + this.getClass().getName());
@@ -49,15 +39,8 @@ public class CanvasMouse {
         //img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         raster = new RasterBufferedImage(width, height);
 
-        lineRasterizer= new LineRasterizerFill(raster);/*Odkomentovat pro použití, potom zase zakomentovat. DDA algoritmus*/
-        //lineRasterizer = new LineRasterizerDashed(raster); /*Odkomentovat pro použití, potom zase zakomentovat. Graphics */
-        //lineRasterizer = new LineRasterizerBI(raster);/*Odkomentovat pro použití, potom zase zakomentovat. Graphics*/
-
-
-
-
-
-
+        lineRasterizer= new LineRasterizerFill(raster);
+        
         panel = new JPanel() {
 
 
@@ -77,42 +60,57 @@ public class CanvasMouse {
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
-
+        Polygon polygon = new Polygon();
         panel.addMouseListener(new MouseAdapter() {
+
             @Override
             public void mousePressed(MouseEvent e) {
+
+                if(e.getButton() == MouseEvent.BUTTON2){
+                    x1 = e.getX();
+                    y1 = e.getY();
+                }
 
                     raster.setPixel(e.getX(), e.getY(), 0xffff00);
                     x = e.getX();
                     y = e.getY();
+                    polygon.addPoint(new Point(x, y));
 
+                    panel.repaint();
 
-                panel.repaint();
             }
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				lineRasterizer.rasterize(x,y,e.getX(),e.getY());
+                clear();
+                polygon.addPoint(new Point(e.getX(),e.getY()));
+                lineRasterizer.rasterize(polygon);
                 panel.repaint();
 
                 lines.add(new Line(x,y,e.getX(),e.getY()));
                 System.out.println("Polozky: "+lines.size());
+
+
 			}
 		});
 
         panel.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
-            public void mouseDragged(MouseEvent e) {
-                clear();
-                lineRasterizer.rasterize(x,y,e.getX(),e.getY());
+            public void mouseMoved(MouseEvent e) {
 
-                redraw();
+
+            }
+            @Override
+            public void mouseDragged(MouseEvent e) {
+
+                clear();
+                lineRasterizer.rasterize(x,y, e.getX(), e.getY());
+                lineRasterizer.rasterize(polygon);
+                panel.repaint();
 
             }
         });
         panel.addKeyListener(new KeyListener() {
-
-
 
 
             @Override
@@ -124,15 +122,58 @@ public class CanvasMouse {
                 if(znak == 'c') {
 
                     System.out.println(znak);
-
+                    polygon.getPoints().clear();
                     lines.clear();
                     redraw();
                     clear();
                 }
 
+                if(znak == 'v'){
+
+                    SeedFill seedFill = new SeedFill(raster);
+                    seedFill.fill(x1,y1, 0xFF0000);
+                    panel.repaint();
+
+                }
+
+
+                if(znak == 'b'){
+
+                    SeedFill seedFill = new SeedFill(raster);
+                    seedFill.fillBoundery(x1,y1,  0XFF0000);
+                    panel.repaint();
+
+
+                }
+
+
+                if(znak == 's'){
+
+                    ScanLine scanLine = new ScanLine(raster);
+                    scanLine.setPolygon(polygon);
+                    scanLine.fill(0);
+                    lineRasterizer.rasterize(polygon);
+                    panel.repaint();
+
+
+                }
+
+                if(znak == 'k'){
+                    ScanLine scanLine = new ScanLine(raster);
+                    scanLine.setPolygon(polygon);
+                    scanLine.fill(1);
+                    lineRasterizer.rasterize(polygon);
+                    panel.repaint();
+                }
+
+                if(znak == 'p'){
+                    ScanLine scanLine = new ScanLine(raster);
+                    scanLine.setPolygon(polygon);
+                    scanLine.fill(2);
+                    lineRasterizer.rasterize(polygon);
+                    panel.repaint();
+                }
             }
-
-
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -147,8 +188,9 @@ public class CanvasMouse {
         });
     }
 
-    public void clear() {
+    public List<Point> clear() {
         raster.clear();
+        return null;
     }
 
     void redraw(){
@@ -169,7 +211,7 @@ public class CanvasMouse {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new CanvasMouse(800, 600).start());
+        SwingUtilities.invokeLater(() -> new CanvasMousePolygon(800, 600).start());
     }
 
 }

@@ -3,8 +3,9 @@ package raster;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class RasterBufferedImage implements Raster{
+public class RasterBufferedImage<x> implements Raster{
     private BufferedImage img;
+    private int backgoundColor;
 
     public RasterBufferedImage(int width, int height){
         img = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
@@ -16,7 +17,13 @@ public class RasterBufferedImage implements Raster{
 
     @Override
     public void setPixel(int x, int y, int color) {
-        img.setRGB(x, y, color);
+            img.setRGB(x, y, color);
+
+
+    }
+    @Override
+    public int getPixel(int x, int y) {
+        return this.img.getRGB(x,y);
     }
 
     @Override
